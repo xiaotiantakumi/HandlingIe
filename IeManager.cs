@@ -26,9 +26,9 @@ namespace HandlingIe
         /// <summary>
         /// 親から開かれた子IEのリスト
         /// </summary>
-        private List<InternetExplorer> _childExplorers = new List<InternetExplorer>();
+        private List<IeManager> _childExplorers = new List<IeManager>();
 
-        private InternetExplorer _parentIe;
+        public InternetExplorer _parentIe;
 
         /// <summary>
         /// SHDocVw.InternetExplorerをラップするためのクラス
@@ -73,8 +73,8 @@ namespace HandlingIe
                 try
                 {
                     var ie = _childExplorers.Last();
-                    ie.Quit();
-                    ie.NewWindow3 -= IeOn_NewWindow3;
+                    ie._parentIe.Quit();
+                    ie._parentIe.NewWindow3 -= IeOn_NewWindow3;
                     _childExplorers.Remove(ie);
                     // リソースを解放
                     Marshal.ReleaseComObject(ie);
@@ -97,8 +97,8 @@ namespace HandlingIe
                 {
                     try
                     {
-                        ie.Quit();
-                        ie.NewWindow3 -= IeOn_NewWindow3;
+                        ie._parentIe.Quit();
+                        ie._parentIe.NewWindow3 -= IeOn_NewWindow3;
                     }
                     catch (Exception exception)
                     {
@@ -158,13 +158,8 @@ namespace HandlingIe
         /// <param name="bstrurl"></param>
         private void IeOn_NewWindow3(ref object ppdisp, ref bool cancel, uint dwflags, string bstrurlcontext, string bstrurl)
         {
-            Type comType = Type.GetTypeFromProgID("InternetExplorer.Application");
-            InternetExplorer ie = Activator.CreateInstance(comType) as InternetExplorer;
+            var ie = new IeManager(bstrurl);
             _childExplorers.Add(ie);
-            ie.RegisterAsBrowser = true;
-            ie.NewWindow3 += IeOn_NewWindow3;
-            ppdisp = ie.Application;
-            ie.Visible = true;
         }
 
 
