@@ -70,19 +70,9 @@ namespace HandlingIe
             // 子の解放
             if (_childExplorers != null && _childExplorers.Any())
             {
-                try
-                {
-                    var ie = _childExplorers.Last();
-                    ie._parentIe.Quit();
-                    ie._parentIe.NewWindow3 -= IeOn_NewWindow3;
-                    _childExplorers.Remove(ie);
-                    // リソースを解放
-                    Marshal.ReleaseComObject(ie);
-                }
-                catch (Exception exception)
-                {
-                    Console.WriteLine(exception);
-                }
+                var ie = _childExplorers.Last();
+                _childExplorers.Remove(ie);
+                ie.Dispose();
             }
         }
         /// <summary>
@@ -95,25 +85,13 @@ namespace HandlingIe
             {
                 foreach (var ie in _childExplorers)
                 {
-                    try
-                    {
-                        ie._parentIe.Quit();
-                        ie._parentIe.NewWindow3 -= IeOn_NewWindow3;
-                    }
-                    catch (Exception exception)
-                    {
-                        Console.WriteLine(exception);
-                    }
-                    finally
-                    {
-                        // リソースを解放
-                        Marshal.ReleaseComObject(ie);
-                    }
+                    _childExplorers.Remove(ie);
+                    ie.Dispose();
                 }
-
                 _childExplorers = null;
             }
         }
+
         /// <summary>
         /// 親を閉じる
         /// </summary>
@@ -124,7 +102,7 @@ namespace HandlingIe
             {
                 if (_parentIe != null)
                 {
-                    if(!IsParentClosed)_parentIe.Quit();
+                    if (!IsParentClosed) _parentIe.Quit();
                     IsParentClosed = true;
                     _parentIe.NewWindow3 -= IeOn_NewWindow3;
                     _parentIe.OnQuit -= IeOn_OnQuit;
@@ -160,6 +138,7 @@ namespace HandlingIe
         {
             var ie = new IeManager(bstrurl);
             _childExplorers.Add(ie);
+            cancel = true;
         }
 
 
