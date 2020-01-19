@@ -70,18 +70,22 @@ namespace HandlingIe
             // 子の解放
             if (_childExplorers != null && _childExplorers.Any())
             {
+                var ie = _childExplorers.Last();
                 try
                 {
-                    var ie = _childExplorers.Last();
-                    ie.Quit();
                     ie.NewWindow3 -= IeOn_NewWindow3;
                     _childExplorers.Remove(ie);
-                    // リソースを解放
-                    Marshal.ReleaseComObject(ie);
+                    ie.Quit();
                 }
                 catch (Exception exception)
                 {
+                    CloseLastChildIe();
                     Console.WriteLine(exception);
+                }
+                finally
+                {
+                    // リソースを解放
+                    Marshal.ReleaseComObject(ie);
                 }
             }
         }
@@ -97,8 +101,8 @@ namespace HandlingIe
                 {
                     try
                     {
-                        ie.Quit();
                         ie.NewWindow3 -= IeOn_NewWindow3;
+                        ie.Quit();
                     }
                     catch (Exception exception)
                     {
@@ -124,17 +128,20 @@ namespace HandlingIe
             {
                 if (_parentIe != null)
                 {
-                    if(!IsParentClosed)_parentIe.Quit();
+                    if (!IsParentClosed) _parentIe.Quit();
                     IsParentClosed = true;
                     _parentIe.NewWindow3 -= IeOn_NewWindow3;
                     _parentIe.OnQuit -= IeOn_OnQuit;
-                    // リソースを解放
-                    Marshal.ReleaseComObject(_parentIe);
                 }
             }
             catch (Exception exception)
             {
                 Console.WriteLine(exception);
+            }
+            finally
+            {
+                // リソースを解放
+                Marshal.ReleaseComObject(_parentIe);
             }
         }
 
