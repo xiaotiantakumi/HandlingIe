@@ -30,6 +30,22 @@ namespace HandlingIe
 
         public InternetExplorer _parentIe;
 
+        public IeManager()
+        {
+            Guid = Guid.NewGuid();
+            _parentIe = new InternetExplorer();
+            try
+            {
+                // 新しくIEを開くタイミングで発生するイベントにアタッチ
+                _parentIe.NewWindow3 += IeOn_NewWindow3;
+                _parentIe.OnQuit += IeOn_OnQuit;
+            }
+            catch (Exception e)
+            {
+                Marshal.ReleaseComObject(_parentIe);
+                Console.WriteLine(e);
+            }
+        }
         /// <summary>
         /// SHDocVw.InternetExplorerをラップするためのクラス
         /// </summary>
@@ -71,8 +87,15 @@ namespace HandlingIe
             if (_childExplorers != null && _childExplorers.Any())
             {
                 var ie = _childExplorers.Last();
-                _childExplorers.Remove(ie);
-                ie.Dispose();
+                if (ie._childExplorers.Any())
+                {
+                    ie.CloseLastChildIe();
+                }
+                else
+                {
+                    ie.Dispose();
+                }
+
             }
         }
         /// <summary>
@@ -85,8 +108,15 @@ namespace HandlingIe
             {
                 foreach (var ie in _childExplorers)
                 {
-                    _childExplorers.Remove(ie);
-                    ie.Dispose();
+                    if (ie._childExplorers.Any())
+                    {
+                        ie.CloseAllChildIe();
+                    }
+                    else
+                    {
+                        _childExplorers.Remove(ie);
+                        ie.Dispose();
+                    }
                 }
                 _childExplorers = null;
             }
@@ -136,9 +166,9 @@ namespace HandlingIe
         /// <param name="bstrurl"></param>
         private void IeOn_NewWindow3(ref object ppdisp, ref bool cancel, uint dwflags, string bstrurlcontext, string bstrurl)
         {
-            var ie = new IeManager(bstrurl);
+            var ie = new IeManager();
             _childExplorers.Add(ie);
-            cancel = true;
+            ppdisp = ie._parentIe;
         }
 
 
