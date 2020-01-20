@@ -16,7 +16,8 @@ namespace HandlingIe
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            Application.Run(new ComSample());
+            //Application.Run(new ProcessSample());
         }
     }
 }

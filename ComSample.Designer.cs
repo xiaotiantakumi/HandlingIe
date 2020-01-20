@@ -1,6 +1,6 @@
 ﻿namespace HandlingIe
 {
-    partial class Form1
+    partial class ComSample
     {
         /// <summary>
         /// 必要なデザイナー変数です。
@@ -134,7 +134,7 @@
             this.label2.TabIndex = 10;
             this.label2.Text = "親が閉じられたか";
             // 
-            // Form1
+            // ComSample
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -149,8 +149,8 @@
             this.Controls.Add(this.btnYahooCloseLastOpenWindow);
             this.Controls.Add(this.btnOpenGoogle);
             this.Controls.Add(this.btnOpenYahoo);
-            this.Name = "Form1";
-            this.Text = "Form1";
+            this.Name = "ComSample";
+            this.Text = "ComSample.cs";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();

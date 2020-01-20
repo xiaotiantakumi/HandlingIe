@@ -10,12 +10,12 @@ using System.Windows.Forms;
 
 namespace HandlingIe
 {
-    public partial class Form1 : Form
+    public partial class ComSample : Form
     {
         private IeManager _ieYahoo;
         private IeManager _ieGoogle;
 
-        public Form1()
+        public ComSample()
         {
             InitializeComponent();
         }
